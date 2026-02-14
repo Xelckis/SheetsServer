@@ -1,0 +1,62 @@
+<head>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<style>
+	body {
+		margin: 0;
+		font-family: 'Roboto Mono', monospace;
+	}
+
+	nav {
+		background: #00A568;
+		height: 60px;
+		padding: 0 30px;
+
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+
+		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+	}
+
+
+	nav h1 {
+		color: white;
+		font-size: 1.2rem;
+		margin: 0;
+		font-weight: 700;
+		letter-spacing: 1px;
+	}
+
+
+	nav .buttons {
+		display: flex;
+		gap: 20px;
+	}
+
+
+	nav .buttons a {
+		text-decoration: none;
+		color: white;
+		font-weight: 400;
+		font-size: 0.95rem;
+		transition: opacity 0.2s;
+	}
+
+	nav .buttons a:hover {
+		opacity: 0.8;
+	}
+</style>
+
+<? var url = ScriptApp.getService().getUrl(); ?>
+
+<nav>
+	<h1>The coolest google sheets blog</h1>
+	<div class="buttons">
+		<a href="<?= url ?>?page=home">🏠 Home</a>
+		<a href="<?= url ?>?page=chat">👤 Chat</a>
+		<a href="<?= url ?>?page=movies">🎬 movies</a>
+		<a href="<?= url ?>?page=games">🎮 Games</a>
+	</div>
+</nav>

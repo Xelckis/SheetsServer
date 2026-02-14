@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<base target="_top">
+	<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+	<style>
+		body {
+			background-color: #5f6368;
+			font-family: 'Roboto Mono', monospace;
+			margin: 0;
+			padding: 0;
+			display: flex;
+			flex-direction: column;
+			height: 100vh;
+		}
+
+		#login-screen {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: #5f6368;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			z-index: 1000;
+			/* Fica na frente de tudo */
+		}
+
+		.login-box {
+			background: white;
+			padding: 30px;
+			border-radius: 8px;
+			text-align: center;
+			box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+			width: 80%;
+			max-width: 300px;
+		}
+
+		.login-box input {
+			border: 2px solid #ccc;
+			border-radius: 4px;
+			padding: 10px;
+			color: #333;
+			margin-bottom: 15px;
+			width: 100%;
+			box-sizing: border-box;
+		}
+
+		.login-btn {
+			background: #81c995;
+			color: #0f5132;
+			border: none;
+			padding: 10px 20px;
+			border-radius: 4px;
+			font-weight: bold;
+			cursor: pointer;
+			width: 100%;
+		}
+
+		#chat-interface {
+			display: none;
+			flex: 1;
+			flex-direction: column;
+			height: 100%;
+		}
+
+		#chat-container {
+			flex: 1;
+			overflow-y: auto;
+			padding: 20px;
+			display: flex;
+			flex-direction: column;
+			gap: 15px;
+			border: 2px solid #ccc;
+			border-radius: 4px;
+			margin: 20px;
+			margin-bottom: 100px;
+		}
+
+		.message-row {
+			display: flex;
+			width: 100%;
+			flex-direction: column;
+		}
+
+		.bubble {
+			padding: 10px 15px;
+			border-radius: 8px;
+			max-width: 70%;
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+			font-size: 0.9rem;
+			word-wrap: break-word;
+		}
+
+		.sender-name {
+			font-size: 0.7em;
+			margin-bottom: 2px;
+			color: #ddd;
+		}
+
+		.left {
+			align-items: flex-start;
+		}
+
+		.left .bubble {
+			background: white;
+			color: #333;
+		}
+
+		.left .sender-name {
+			color: #ccc;
+			margin-left: 5px;
+		}
+
+		.right {
+			align-items: flex-end;
+		}
+
+		.right .bubble {
+			background: #81c995;
+			color: #0f5132;
+		}
+
+		.right .sender-name {
+			display: none;
+		}
+
+		.input-area {
+			position: fixed;
+			bottom: 20px;
+			left: 20px;
+			right: 20px;
+			background: #5f6368;
+			padding: 10px;
+			border: 2px solid #ccc;
+			border-radius: 4px;
+			display: flex;
+			gap: 10px;
+		}
+
+		#msgInput {
+			flex: 1;
+			background: transparent;
+			border: none;
+			color: white;
+			font-family: 'Roboto Mono';
+			outline: none;
+		}
+
+		.send-btn {
+			background: transparent;
+			border: none;
+			cursor: pointer;
+			color: white;
+			font-size: 1.5em;
+		}
+
+		.send-btn:hover {
+			color: #81c995;
+		}
+
+		::-webkit-scrollbar {
+			width: 8px;
+		}
+
+		::-webkit-scrollbar-thumb {
+			background: #888;
+			border-radius: 4px;
+		}
+	</style>
+</head>
+
+<body>
+
+	<?!= include('nav'); ?>
+
+	<div id="login-screen">
+		<div class="login-box">
+			<h3 style="color:#333; margin-top:0;">Identity Protocol</h3>
+			<input type="text" id="nicknameInput" placeholder="Nickname (max 10)" maxlength="10">
+			<button class="login-btn" onclick="enterChat()">CONNECT</button>
+		</div>
+	</div>
+
+	<div id="chat-interface">
+		<div id="chat-container">
+			<div class="message-row left">
+				<div class="bubble">Aguardando conexão...</div>
+			</div>
+		</div>
+
+		<div class="input-area">
+			<input type="text" id="msgInput" placeholder="Type your message..."
+				onkeypress="handleEnter(event)">
+			<button class="send-btn" onclick="sendMessage()">&#10148;</button>
+		</div>
+	</div>
+
+	<script>
+		var currentUser = "";
+
+		function enterChat() {
+			var nickInput = document.getElementById('nicknameInput');
+			var name = nickInput.value.trim();
+
+			if (name === "") {
+				alert("Please enter a nickname.");
+				return;
+			}
+			currentUser = name;
+
+
+			document.getElementById('login-screen').style.display = 'none';
+			document.getElementById('chat-interface').style.display = 'flex';
+
+			refreshChat();
+
+			setInterval(refreshChat, 3000);
+		}
+
+
+		function sendMessage() {
+			var input = document.getElementById('msgInput');
+			var msg = input.value;
+			if (!msg) return;
+
+			addBubble(msg, currentUser, 'right');
+			input.value = '';
+
+
+			google.script.run.saveChatMessage(currentUser, msg);
+		}
+
+		function refreshChat() {
+			google.script.run.withSuccessHandler(updateUI).getChatHistory();
+		}
+
+		function updateUI(messages) {
+			var container = document.getElementById('chat-container');
+			container.innerHTML = '';
+
+			messages.forEach(function (m) {
+				var side = (m.user === currentUser) ? 'right' : 'left';
+
+				var row = document.createElement('div');
+				row.className = 'message-row ' + side;
+
+				if (side === 'left') {
+					var nameTag = document.createElement('div');
+					nameTag.className = 'sender-name';
+					nameTag.innerText = m.user + " - " + m.time;
+					row.appendChild(nameTag);
+				}
+
+				var bubble = document.createElement('div');
+				bubble.className = 'bubble';
+				bubble.innerText = m.msg;
+
+				row.appendChild(bubble);
+				container.appendChild(row);
+			});
+		}
+
+		function addBubble(text, user, side) {
+			var container = document.getElementById('chat-container');
+			var row = document.createElement('div');
+			row.className = 'message-row ' + side;
+
+			var bubble = document.createElement('div');
+			bubble.className = 'bubble';
+			bubble.innerText = text;
+
+			row.appendChild(bubble);
+			container.appendChild(row);
+			container.scrollTop = container.scrollHeight;
+		}
+
+		function handleEnter(e) {
+			if (e.key === 'Enter') sendMessage();
+		}
+
+		document.getElementById('nicknameInput').addEventListener('keypress', function (e) {
+			if (e.key === 'Enter') enterChat();
+		});
+
+	</script>
+</body>
+
+</html>

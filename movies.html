@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<base target="_top">
+	<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+	<style>
+		body {
+			background-color: #5f6368;
+			font-family: 'Roboto Mono', monospace;
+			margin: 0;
+			color: white;
+		}
+
+		.container {
+			padding: 20px;
+			max-width: 1200px;
+			margin: 0 auto;
+		}
+
+		h2 {
+			color: #00A568;
+			margin-bottom: 20px;
+			border-bottom: 1px solid #333;
+			padding-bottom: 10px;
+		}
+
+		.movie-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+			gap: 20px;
+		}
+
+		.movie-card {
+			background: #1f1f1f;
+			border-radius: 8px;
+			overflow: hidden;
+			transition: transform 0.3s, box-shadow 0.3s;
+			cursor: pointer;
+			text-decoration: none;
+			color: white;
+			display: block;
+		}
+
+		.movie-card:hover {
+			transform: scale(1.05);
+			box-shadow: 0 0 15px rgba(0, 165, 104, 0.5);
+			z-index: 10;
+		}
+
+		.poster {
+			width: 100%;
+			height: 300px;
+			object-fit: cover;
+		}
+
+		.info {
+			padding: 10px;
+		}
+
+		.title {
+			font-weight: bold;
+			font-size: 1rem;
+			margin-bottom: 5px;
+		}
+
+		.desc {
+			font-size: 0.8rem;
+			color: #aaa;
+		}
+	</style>
+</head>
+
+<body>
+
+	<?!= include('nav'); ?>
+
+	<div class="container">
+		<h2>Movie Catalog</h2>
+
+		<div class="movie-grid">
+			<? if (videos.length == 0) { ?>
+			<p>No videos available at this time.</p>
+			<? } ?>
+
+			<? for (var i = 0; i < videos.length; i++) { ?>
+			<a href="<?= url ?>?page=watch&v=<?= videos[i].id ?>" class="movie-card">
+				<img src="<?= videos[i].capa ?>" class="poster"
+					onerror="this.src='https://via.placeholder.com/200x300?text=No+Image'">
+				<div class="info">
+					<div class="title">
+						<?= videos[i].titulo ?>
+					</div>
+					<div class="desc">
+						<?= videos[i].descricao.substring(0, 40) ?>...
+					</div>
+				</div>
+			</a>
+			<? } ?>
+		</div>
+	</div>
+
+</body>
+
+</html>

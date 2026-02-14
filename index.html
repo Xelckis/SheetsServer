@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<base target="_top">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<style>
+		body {
+			background-color: #5f6368;
+			font-family: 'Roboto Mono', monospace;
+			margin: 0;
+			padding: 0;
+		}
+
+		.post {
+			border-bottom: 1px solid #eee;
+			padding-bottom: 20px;
+			margin: 10px 5px 10px 15px;
+			display: flex;
+			transition: 0.3s;
+			flex-wrap: wrap;
+		}
+
+		.post:hover {
+			background-color: rgba(194, 195, 197, 0.4);
+		}
+
+		.post-img-content {
+			width: 400px;
+			max-height: 650px;
+			object-fit: cover;
+			border-radius: 5px;
+			margin: 10px;
+			max-width: 100%;
+			height: auto;
+		}
+
+		.post .post-info {
+			margin-left: 20px;
+			margin-top: 10px;
+			white-space: normal;
+			overflow-wrap: break-word;
+			word-wrap: break-word;
+			max-width: 1000px;
+			flex: 1;
+			min-width: 250px;
+		}
+
+		.date {
+			color: #888;
+			font-size: 0.9em;
+		}
+
+		h2 {
+			color: #85D1B2;
+		}
+
+
+		@media (max-width: 768px) {
+			.post {
+				flex-direction: column;
+				margin: 10px;
+			}
+
+			.post-image {
+				width: 100%;
+				display: flex;
+				justify-content: center;
+			}
+
+			.post-img-content {
+				width: 100%;
+				margin: 0 0 15px 0;
+			}
+
+			.post .post-info {
+				margin-left: 0;
+				width: 100%;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<?!= include('nav'); ?>
+
+	<? for (var i = 0; i < posts.length; i++) { ?>
+	<div class="post">
+		<div class="post-image">
+			<img src="<?= posts[i].img ?>" class="post-img-content">
+		</div>
+		<div class="post-info">
+			<div class="date">
+				<?= new Date(posts[i].data).toLocaleDateString() ?>
+			</div>
+			<h2>
+				<?= posts[i].titulo ?>
+			</h2>
+			<p>
+				<?= posts[i].conteudo.length > 700 ? posts[i].conteudo.substring(0, 700) + '...' : posts[i].conteudo ?>
+			</p>
+		</div>
+	</div>
+	<? } ?>
+
+	<? if (posts.length === 0) { ?>
+	<p>Nenhum post encontrado.</p>
+	<? } ?>
+</body>
+
+</html>

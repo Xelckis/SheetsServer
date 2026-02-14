@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<base target="_top">
+	<title>DOOM on Google Sheets</title>
+	<style>
+		body {
+			background-color: #5f6368;
+			color: #ccc;
+			font-family: 'Courier New', Courier, monospace;
+			margin: 0;
+			padding: 0;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			height: 100vh;
+			overflow: hidden;
+		}
+
+		.nav {
+			display: block;
+			width: 100%;
+		}
+
+		#canvas-container {
+			width: 100%;
+			height: 800px;
+			margin-top: 20px;
+			position: relative;
+			border: 2px solid #333;
+			box-shadow: 0 0 30px rgba(0, 200, 0, 0.1);
+		}
+
+		canvas {
+			width: 1080px;
+			height: 100%;
+			display: block;
+		}
+
+		#start-btn {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			padding: 15px 30px;
+			background: #c00;
+			color: white;
+			border: 2px solid #fff;
+			font-family: inherit;
+			font-weight: bold;
+			font-size: 1.2rem;
+			cursor: pointer;
+			z-index: 10;
+		}
+
+		#start-btn:hover {
+			background: #f00;
+		}
+
+		.controls {
+			margin-top: 15px;
+			text-align: center;
+			font-size: 0.8rem;
+			color: white;
+			line-height: 1.6;
+		}
+
+		b {
+			color: #fff;
+		}
+	</style>
+
+	<script src="https://js-dos.com/6.22/current/js-dos.js"></script>
+</head>
+
+<body>
+
+	<div class="nav">
+		<?!= include('nav'); ?>
+	</div>
+	<div id="canvas-container">
+		<button id="start-btn" onclick="startDoom()">CLICK TO START</button>
+		<canvas id="jsdos"></canvas>
+	</div>
+
+	<div class="controls">
+		<p>
+			<b>Move:</b> UP, DOWN, LEFT, RIGHT &nbsp;|&nbsp;
+			<b>Strafe:</b> A, D
+		</p>
+		<p>
+			<b>Use:</b> W &nbsp;|&nbsp;
+			<b>Fire:</b> S &nbsp;|&nbsp;
+			<b>Speed on:</b> SPACE &nbsp;|&nbsp;
+			<b>Strafe on:</b> ALT
+		</p>
+		<p>
+			<b>Change Weapon:</b> 1, 2, 3, 4, 5, 6, 7
+		</p>
+		<p style="margin-top: 10px; color: #666;">
+			<i>Tip: Click on the screen to capture the mouse. ESC to release.</i>
+		</p>
+	</div>
+
+	<script>
+		function startDoom() {
+			document.getElementById('start-btn').style.display = 'none';
+
+			Dos(document.getElementById("jsdos"), {
+				wdosboxUrl: "https://js-dos.com/6.22/current/wdosbox.js",
+				cycles: "max",
+				autolock: false,
+			}).ready(function (fs, main) {
+				var gameUrl = "https://cdn.jsdelivr.net/gh/thedoggybrad/doom_on_js-dos@main/DOOM-@evilution.zip";
+
+				fs.extract(gameUrl).then(function () {
+					main(["-c", "cd DOOM", "-c", "doom.exe"])
+				}).catch(function (err) {
+					console.error("Download error:", err);
+					alert("Download error");
+				});
+			});
+		}
+	</script>
+
+</body>
+
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<base target="_top">
+	<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+
+	<style>
+		body {
+			background-color: #000;
+			font-family: 'Roboto Mono', monospace;
+			margin: 0;
+			color: white;
+			display: flex;
+			flex-direction: column;
+			min-height: 100vh;
+		}
+
+		.player-wrapper {
+			flex: 1;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background: black;
+			width: 100%;
+		}
+
+		.video-container {
+			width: 80%;
+			box-shadow: 0 0 50px rgba(0, 165, 104, 0.1);
+		}
+
+		.details {
+			padding: 30px;
+			background: #141414;
+		}
+
+		h1 {
+			color: #00A568;
+			margin-top: 0;
+		}
+
+		.btn-back {
+			display: inline-block;
+			margin-bottom: 20px;
+			color: #aaa;
+			text-decoration: none;
+		}
+
+		.btn-back:hover {
+			color: white;
+		}
+	</style>
+</head>
+
+<body>
+
+	<?!= include('nav'); ?>
+
+	<div class="details">
+		<a href="<?= url ?>?page=movies" class="btn-back">&larr; Return to Movies Catalog</a>
+
+		<? if (videoData) { ?>
+		<h1>
+			<?= videoData.titulo ?>
+		</h1>
+		<p>
+			<?= videoData.descricao ?>
+		</p>
+		<? } else { ?>
+		<h1>Erro 404</h1>
+		<p>Vdeo not found</p>
+		<? } ?>
+	</div>
+
+	<? if (videoData) { ?>
+	<div class="player-wrapper">
+		<div class="video-container"
+			style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px;">
+			<iframe src="https://drive.google.com/file/d/<?= videoData.driveId ?>/preview"
+				style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;"
+				allow="autoplay; encrypted-media" allowfullscreen>
+			</iframe>
+		</div>
+	</div>
+	<? } ?>
+
+
+</body>
+
+</html>
